@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 from openpilot.selfdrive.car.isotp_parallel_query import IsoTpParallelQuery
 from openpilot.system.swaglog import cloudlog
+from panda.python import uds
 
 EXT_DIAG_REQUEST = b'\x10\x03'
 EXT_DIAG_RESPONSE = b'\x50\x03'
 
 COM_CONT_RESPONSE = b''
-
 
 def disable_ecu(logcan, sendcan, bus=0, addr=0x7d0, sub_addr=None, com_cont_req=b'\x28\x83\x01', timeout=0.1, retry=10, debug=False):
   """Silence an ECU by disabling sending and receiving messages using UDS 0x28.
@@ -45,5 +45,8 @@ if __name__ == "__main__":
   time.sleep(1)
 
   # honda bosch radar disable
-  disabled = disable_ecu(logcan, sendcan, bus=1, addr=0x18DAB0F1, com_cont_req=b'\x28\x83\x03', timeout=0.5, debug=False)
-  print(f"disabled: {disabled}")
+  # disabled = disable_ecu(logcan, sendcan, bus=1, addr=0x18DAB0F1, com_cont_req=b'\x28\x83\x03', timeout=0.5, debug=False)
+  # print(f"disabled: {disabled}")
+
+  communication_control = bytes([uds.SERVICE_TYPE.COMMUNICATION_CONTROL, uds.CONTROL_TYPE.ENABLE_RX_DISABLE_TX, uds.MESSAGE_TYPE.NORMAL])
+  disabled = disable_ecu(logcan, sendcan, bus=2, addr=0x728, sub_addr=0xf, com_cont_req=communication_control)

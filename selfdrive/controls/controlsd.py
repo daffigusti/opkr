@@ -733,7 +733,7 @@ class Controls:
 
     CC = car.CarControl.new_message()
     CC.enabled = self.enabled
-
+    # self.active = True;
     # Check which actuators can be enabled
     standstill = (CS.vEgo <= max(self.CP.minSteerSpeed, MIN_LATERAL_CONTROL_SPEED) and self.no_mdps_mods) or CS.standstill
     CC.latActive = self.active and not CS.steerFaultTemporary and not CS.steerFaultPermanent and \
@@ -1058,7 +1058,7 @@ class Controls:
     elif lat_tuning == 'atom':
       controlsState.lateralControlState.atomState = lac_log
 
-    if lat_tuning == 'torque':
+    if lat_tuning == 'torque' and not self.joystick_mode:
       controlsState.steeringAngleDesiredDeg = lac_log.desiredLateralAccel
     else:
       controlsState.steeringAngleDesiredDeg = self.desired_angle_deg

@@ -47,7 +47,16 @@ class LatControlTorque(LatControl):
 
   def live_tune(self):
     self.mpc_frame += 1
-    if self.mpc_frame % 300 == 0:
+    if self.mpc_frame % 300 == 0 and self.tune_torque_param:
+      self.lat_accel = self._op_params.get('TORQUE_LAT_ACCEL', force_update=True)
+      self.friction = self._op_params.get('TORQUE_FRICTION', force_update=True)
+      self.lat_accel = float(Decimal(self.params.get("TorqueMaxLatAccel", encoding="utf8")) * Decimal('0.1'))
+      self.friction = float(Decimal(self.params.get("TorqueFriction", encoding="utf8")) * Decimal('0.001'))
+      self.mpc_frame = 0
+      
+      print("torque_params.friction 1: %d", self.torque_params.friction)
+      print("torque_params.latAccelFactor 1: %d", self.torque_params.latAccelFactor)
+    elif self.mpc_frame % 300 == 0 and not self.live_torque_params:
       self.max_lat_accel = float(Decimal(self.params.get("TorqueMaxLatAccel", encoding="utf8")) * Decimal('0.1'))
       self.kp = float(Decimal(self.params.get("TorqueKp", encoding="utf8")) * Decimal('0.1'))
       self.kf = float(Decimal(self.params.get("TorqueKf", encoding="utf8")) * Decimal('0.1'))
@@ -59,11 +68,23 @@ class LatControlTorque(LatControl):
                               k_f=self.kf, pos_limit=self.steer_max, neg_limit=-self.steer_max)
         
       self.mpc_frame = 0
+      print("torque_params.friction 2: %d", self.torque_params.friction)
+      print("torque_params.latAccelFactor 2: %d", self.torque_params.latAccelFactor)
 
   def update_live_torque_params(self, latAccelFactor, latAccelOffset, friction):
-    if self.live_torque_params:
+    self.mpc_frame += 1
+    if self.live_torque_params and not self.tune_torque_param:
       self.torque_params.friction = friction
       self.torque_params.latAccelFactor = latAccelFactor
+      self.torque_params.latAccelOffset = latAccelOffset
+      
+      if self.mpc_frame % 300 == 0:
+        print("torque_params.friction Live: %d", self.torque_params.friction)
+        print("torque_params.latAccelFactor Live: %d", self.torque_params.latAccelFactor)
+      
+    elif self.tune_torque_param:
+      self.torque_params.friction = self.friction
+      self.torque_params.latAccelFactor = self.lat_accel
       self.torque_params.latAccelOffset = latAccelOffset
     else:
       self.torque_params.friction = self.friction
@@ -74,8 +95,9 @@ class LatControlTorque(LatControl):
     self.lt_timer += 1
     if self.lt_timer > 100:
       self.lt_timer = 0
-      self.live_tune_enabled = self.params.get_bool("OpkrLiveTunePanelEnable")
+      self.live_tune_enabled = self.params.get_bool("OpkrLiveTunePanelEnable") or self._op_params.get("LiveTuneTorque")
       self.live_torque_params = self.params.get_bool("OpkrLiveTorque")
+      print(self.live_tune_enabled);
     if self.live_tune_enabled:
       self.live_tune()
 

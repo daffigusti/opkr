@@ -3381,8 +3381,8 @@ SteerMax::SteerMax() : AbstractControl("", "", "") {
     auto str = QString::fromStdString(params.get("SteerMaxBaseAdj"));
     int value = str.toInt();
     value = value - 1;
-    if (value <= 200) {
-      value = 200;
+    if (value <= 100) {
+      value = 100;
     }
     QString values = QString::number(value);
     params.put("SteerMaxBaseAdj", values.toStdString());
@@ -3415,8 +3415,8 @@ SteerMax::SteerMax() : AbstractControl("", "", "") {
     if (value < value1) {
       value = value1;
       ConfirmationDialog::alert(tr("The value cannot be less than SteerMaxBase") + "(" + str1 + ")", this);
-    } else if (value <= 200) {
-      value = 200;
+    } else if (value <= 100) {
+      value = 100;
     }
     QString values = QString::number(value);
     params.put("SteerMaxAdj", values.toStdString());
@@ -4766,8 +4766,8 @@ TorqueFriction::TorqueFriction() : AbstractControl(tr("Friction"), tr("Adjust Fr
     auto str = QString::fromStdString(params.get("TorqueFriction"));
     int value = str.toInt();
     value = value + 5;
-    if (value >= 300) {
-      value = 300;
+    if (value >= 400) {
+      value = 400;
     }
     QString values = QString::number(value);
     params.put("TorqueFriction", values.toStdString());

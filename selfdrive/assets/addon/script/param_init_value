@@ -30,7 +30,7 @@ TorqueKp:10
 TorqueKf:10
 TorqueKi:1
 TorqueFriction:80
-TorqueUseAngle:1
+TorqueUseAngle:0
 TorqueMaxLatAccel:30
 TorqueAngDeadZone:10
 CameraOffsetAdj:40
@@ -40,8 +40,8 @@ SteerRatioMaxAdj:1750
 SteerActuatorDelayAdj:36
 SteerLimitTimerAdj:100
 TireStiffnessFactorAdj:85
-SteerMaxBaseAdj:384
-SteerMaxAdj:384
+SteerMaxBaseAdj:150
+SteerMaxAdj:150
 SteerDeltaUpBaseAdj:3
 SteerDeltaUpAdj:3
 SteerDeltaDownBaseAdj:7
